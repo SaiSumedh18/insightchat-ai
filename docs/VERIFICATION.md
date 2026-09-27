@@ -28,9 +28,9 @@ The browser workflow exercises registration, CSV upload, chart selection, data p
 
 OpenAI adapter tests inspect the Responses API payload and simulate returned answers/errors. They confirm bounded evidence, recent history, grounding instructions, no provider-side response storage requested, and empty-answer handling.
 
-## Remaining external verification
+## External verification status
 
-- **Live OpenAI call:** not run because no API key was supplied. The app reports `aiEnabled: false` and disables sending chat questions. Add the key to the active environment, restart the API, and run `npm run verify:ai`.
+- **Live OpenAI call:** passed on September 27, 2026 after the key was added to the root `.env` and the API container was recreated. `npm run verify:ai` confirmed Books as the highest-revenue category with a total of 30 and verified that both chat messages persisted. The temporary verification account and dataset were removed. AI is enabled in the running Docker app. Historical screenshots show the earlier setup-pending state.
 - **GitHub Actions execution:** the workflow is included and its build/test commands passed locally. No GitHub repository was created or pushed, so no hosted Actions run is claimed.
 
 The Vite build emits an advisory that the chart-containing JavaScript bundle exceeds 500 kB uncompressed (about 189 kB gzipped). This does not fail the build; route-level chart splitting is a possible later optimization.
