@@ -1,0 +1,40 @@
+# Verification — September 27, 2026
+
+Project: `/Users/saisumedh/Downloads/insightchat-ai`
+
+## Completed on this Mac
+
+| Check                                                       | Result                         |
+| ----------------------------------------------------------- | ------------------------------ |
+| TypeScript compilation, client and server                   | Passed                         |
+| Vite production build                                       | Passed                         |
+| Vitest + Supertest                                          | 22 tests passed across 3 files |
+| Browser workflow against local development servers          | Passed                         |
+| Browser workflow against full Docker stack                  | Passed                         |
+| Mobile width / horizontal overflow assertion                | Passed at 390 px               |
+| Desktop, mobile, and sign-in screenshots                    | Captured and visually reviewed |
+| PostgreSQL container                                        | Healthy; localhost:5437        |
+| API container                                               | Healthy; localhost:4300        |
+| Production frontend container                               | Running; localhost:5177        |
+| API health endpoint through direct API and browser workflow | Passed                         |
+| npm audit, including development dependencies               | 0 reported vulnerabilities     |
+| Prettier formatting                                         | Passed                         |
+| Real environment files ignored by Git                       | Confirmed                      |
+| Local server environment file excluded from Docker image    | Confirmed                      |
+
+## Verification scope
+
+The browser workflow exercises registration, CSV upload, chart selection, data preview, reload persistence, invalid CSV errors, mobile layout, dataset deletion, and sign-out. Backend tests use real PostgreSQL and include isolation between two users, password validation, CSRF origin checks, upload limits, analytic calculations, chat persistence, deletion cascades, and graceful AI failures.
+
+OpenAI adapter tests inspect the Responses API payload and simulate returned answers/errors. They confirm bounded evidence, recent history, grounding instructions, no provider-side response storage requested, and empty-answer handling.
+
+## Remaining external verification
+
+- **Live OpenAI call:** not run because no API key was supplied. The app reports `aiEnabled: false` and disables sending chat questions. Add the key to the active environment, restart the API, and run `npm run verify:ai`.
+- **GitHub Actions execution:** the workflow is included and its build/test commands passed locally. No GitHub repository was created or pushed, so no hosted Actions run is claimed.
+
+The Vite build emits an advisory that the chart-containing JavaScript bundle exceeds 500 kB uncompressed (about 189 kB gzipped). This does not fail the build; route-level chart splitting is a possible later optimization.
+
+## Running state
+
+The complete Docker stack is left running. Open http://localhost:5177 and create your own account. The root `.env` controls Docker; `server/.env` controls local development. See the README for starting, stopping, and enabling AI.

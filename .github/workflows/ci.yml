@@ -1,0 +1,39 @@
+name: Test and build
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: insightchat
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: insightchat_test
+        ports: ['5437:5432']
+        options: >-
+          --health-cmd "pg_isready -U insightchat -d insightchat_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://insightchat:ci-only-password@localhost:5437/insightchat_test
+      JWT_SECRET: ci-only-test-secret-with-at-least-32-characters
+      APP_ORIGIN: http://localhost:5177
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-results
+          path: |
+            test-results/
+            docs/screenshots/

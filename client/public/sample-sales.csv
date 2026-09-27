@@ -1,0 +1,121 @@
+Month,Category,Region,Revenue,Orders
+Jan,Electronics,East,10119,206
+Jan,Electronics,West,7602,108
+Jan,Electronics,North,8503,134
+Jan,Electronics,South,8071,168
+Jan,Home & Living,East,7771,168
+Jan,Home & Living,West,7418,83
+Jan,Home & Living,North,5130,135
+Jan,Home & Living,South,5383,86
+Jan,Clothing,East,4252,42
+Jan,Clothing,West,5765,151
+Jan,Clothing,North,5598,93
+Jan,Clothing,South,6232,70
+Jan,Books,East,2202,23
+Jan,Books,West,3713,53
+Jan,Books,North,4615,131
+Jan,Books,South,4408,80
+Jan,Outdoor,East,5259,59
+Jan,Outdoor,West,3793,54
+Jan,Outdoor,North,3036,48
+Jan,Outdoor,South,5527,70
+Feb,Electronics,East,7918,172
+Feb,Electronics,West,9056,192
+Feb,Electronics,North,8970,113
+Feb,Electronics,South,9972,146
+Feb,Home & Living,East,8305,207
+Feb,Home & Living,West,7988,85
+Feb,Home & Living,North,7196,143
+Feb,Home & Living,South,6550,145
+Feb,Clothing,East,5561,77
+Feb,Clothing,West,6697,82
+Feb,Clothing,North,5664,96
+Feb,Clothing,South,6185,143
+Feb,Books,East,1487,23
+Feb,Books,West,4466,62
+Feb,Books,North,1626,25
+Feb,Books,South,4849,103
+Feb,Outdoor,East,3956,56
+Feb,Outdoor,West,4257,52
+Feb,Outdoor,North,3066,37
+Feb,Outdoor,South,3855,63
+Mar,Electronics,East,10245,148
+Mar,Electronics,West,10374,235
+Mar,Electronics,North,9995,178
+Mar,Electronics,South,9687,146
+Mar,Home & Living,East,5669,60
+Mar,Home & Living,West,6554,94
+Mar,Home & Living,North,7621,120
+Mar,Home & Living,South,7804,102
+Mar,Clothing,East,6752,160
+Mar,Clothing,West,4238,108
+Mar,Clothing,North,6597,87
+Mar,Clothing,South,4943,71
+Mar,Books,East,1571,25
+Mar,Books,West,3623,48
+Mar,Books,North,2170,22
+Mar,Books,South,2920,31
+Mar,Outdoor,East,2985,43
+Mar,Outdoor,West,2971,45
+Mar,Outdoor,North,5451,80
+Mar,Outdoor,South,5459,61
+Apr,Electronics,East,11177,129
+Apr,Electronics,West,8982,142
+Apr,Electronics,North,8066,80
+Apr,Electronics,South,9521,206
+Apr,Home & Living,East,8095,197
+Apr,Home & Living,West,8527,174
+Apr,Home & Living,North,5626,102
+Apr,Home & Living,South,8244,92
+Apr,Clothing,East,5742,133
+Apr,Clothing,West,4876,58
+Apr,Clothing,North,5740,61
+Apr,Clothing,South,5467,81
+Apr,Books,East,3566,99
+Apr,Books,West,4086,83
+Apr,Books,North,4092,59
+Apr,Books,South,4448,57
+Apr,Outdoor,East,2856,39
+Apr,Outdoor,West,4180,76
+Apr,Outdoor,North,4258,121
+Apr,Outdoor,South,5357,78
+May,Electronics,East,9550,167
+May,Electronics,West,9579,199
+May,Electronics,North,11065,151
+May,Electronics,South,10947,110
+May,Home & Living,East,7494,124
+May,Home & Living,West,5626,68
+May,Home & Living,North,8123,147
+May,Home & Living,South,7209,205
+May,Clothing,East,5753,75
+May,Clothing,West,5301,143
+May,Clothing,North,3758,46
+May,Clothing,South,6899,93
+May,Books,East,2280,54
+May,Books,West,2286,50
+May,Books,North,1650,17
+May,Books,South,4642,107
+May,Outdoor,East,5515,108
+May,Outdoor,West,2925,30
+May,Outdoor,North,4651,83
+May,Outdoor,South,3485,39
+Jun,Electronics,East,8367,139
+Jun,Electronics,West,10420,140
+Jun,Electronics,North,9134,111
+Jun,Electronics,South,9294,101
+Jun,Home & Living,East,5495,83
+Jun,Home & Living,West,5920,137
+Jun,Home & Living,North,6384,172
+Jun,Home & Living,South,7409,115
+Jun,Clothing,East,5710,90
+Jun,Clothing,West,3329,75
+Jun,Clothing,North,6199,147
+Jun,Clothing,South,4237,98
+Jun,Books,East,1428,18
+Jun,Books,West,1590,15
+Jun,Books,North,2274,32
+Jun,Books,South,4040,41
+Jun,Outdoor,East,3277,64
+Jun,Outdoor,West,5362,56
+Jun,Outdoor,North,3395,35
+Jun,Outdoor,South,5707,65

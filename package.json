@@ -1,0 +1,29 @@
+{
+  "name": "insightchat-ai",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build --workspaces",
+    "test": "npm run test -w server",
+    "test:e2e": "playwright test",
+    "check": "npm run build && npm test",
+    "db:migrate": "npm run db:migrate -w server",
+    "setup": "node scripts/setup.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify:ai": "node scripts/verify-ai.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "concurrently": "^9.2.1",
+    "prettier": "^3.9.9"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
