@@ -31,7 +31,7 @@ OpenAI adapter tests inspect the Responses API payload and simulate returned ans
 ## External verification status
 
 - **Live OpenAI call:** passed on September 27, 2026 after the key was added to the root `.env` and the API container was recreated. `npm run verify:ai` confirmed Books as the highest-revenue category with a total of 30 and verified that both chat messages persisted. The temporary verification account and dataset were removed. AI is enabled in the running Docker app. Historical screenshots show the earlier setup-pending state.
-- **GitHub Actions execution:** the workflow is included and its build/test commands passed locally. No GitHub repository was created or pushed, so no hosted Actions run is claimed.
+- **GitHub Actions execution:** passed in [run 36334646208](https://github.com/SaiSumedh18/insightchat-ai/actions/runs/36334646208). GitHub verified the production build, 22 backend/adapter tests, and the browser workflow against its disposable PostgreSQL service. Source, README, screenshots, Docker configuration, and tests are published in [SaiSumedh18/insightchat-ai](https://github.com/SaiSumedh18/insightchat-ai), created as a private repository.
 
 The Vite build emits an advisory that the chart-containing JavaScript bundle exceeds 500 kB uncompressed (about 189 kB gzipped). This does not fail the build; route-level chart splitting is a possible later optimization.
 
