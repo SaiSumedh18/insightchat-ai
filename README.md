@@ -1,5 +1,7 @@
 # InsightChat AI
 
+[![Test and build](https://github.com/SaiSumedh18/insightchat-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/SaiSumedh18/insightchat-ai/actions/workflows/ci.yml)
+
 A student-friendly full-stack project that turns a CSV into a dashboard and a conversation. Built with **TypeScript, React, Vite, Express, PostgreSQL, and the OpenAI API**.
 
 ![InsightChat dashboard](docs/screenshots/dashboard.png)
@@ -169,7 +171,7 @@ The browser test generates real screenshots, not mockups:
 
 ## GitHub
 
-The repository includes GitHub Actions, but a workflow only runs remotely after you push to GitHub. To publish later, create an empty repository in your account and add its URL as `origin`, then push `main`. Do not add `.env` files. No GitHub account is required to use or test the app locally.
+Source: [SaiSumedh18/insightchat-ai](https://github.com/SaiSumedh18/insightchat-ai). The [Test and build workflow](https://github.com/SaiSumedh18/insightchat-ai/actions/workflows/ci.yml) runs on pushes and pull requests, using a disposable PostgreSQL database and mocked OpenAI responses. No API key is required in CI. Do not add real `.env` files to Git.
 
 ## Troubleshooting
 
