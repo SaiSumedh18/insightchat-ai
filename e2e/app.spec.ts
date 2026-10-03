@@ -46,3 +46,21 @@ test('register, upload, explore charts, reload, and delete', async ({ page }) =>
   await page.getByLabel('Sign out').click();
   await expect(page.getByRole('heading', { name: 'Welcome back.' })).toBeVisible();
 });
+
+test('streamed answer appears and persists after reload', async ({ page }) => {
+  test.skip(!process.env.E2E_STUB_AI, 'Uses the explicitly configured test-only provider');
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Create an account', exact: true }).click();
+  await page.getByLabel('Email address').fill(`stream-${Date.now()}@example.invalid`);
+  await page.getByLabel('Password', { exact: true }).fill('browser-test-password');
+  await page.getByRole('button', { name: 'Create account', exact: true }).click();
+  await page.getByRole('button', { name: 'Or explore a sample sales dataset' }).click();
+  await page.getByLabel('Ask about your data').fill('Summarize this dataset');
+  await page.getByLabel('Send question').click();
+  await expect(page.locator('.message.assistant')).toContainText('This is a streamed');
+  await expect(page.locator('.message.assistant')).toContainText('grounded in dataset statistics.');
+  await page.reload();
+  await expect(page.locator('.message.assistant')).toContainText(
+    'This is a streamed test answer grounded in dataset statistics.',
+  );
+});

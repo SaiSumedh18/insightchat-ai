@@ -1,0 +1,29 @@
+{
+  "method": "Local o200k_base encoding of evidence JSON only; excludes instructions/history, API framing and output. Synthetic 10,000-row, 12-column fixture (6 text/6 numeric, 20 groups per category). Estimates, not billed usage or cost savings.",
+  "result": [
+    {
+      "question": "Revenue by Category",
+      "beforeCharacters": 27445,
+      "afterCharacters": 1781,
+      "beforeEstimatedTokens": 8170,
+      "afterEstimatedTokens": 483,
+      "reductionPercent": 94.08812729498165
+    },
+    {
+      "question": "Summarize this dataset",
+      "beforeCharacters": 27445,
+      "afterCharacters": 5562,
+      "beforeEstimatedTokens": 8170,
+      "afterEstimatedTokens": 1622,
+      "reductionPercent": 80.1468788249694
+    },
+    {
+      "question": "What is the total Profit?",
+      "beforeCharacters": 27445,
+      "afterCharacters": 2557,
+      "beforeEstimatedTokens": 8170,
+      "afterEstimatedTokens": 716,
+      "reductionPercent": 91.23623011015911
+    }
+  ]
+}

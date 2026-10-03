@@ -26,7 +26,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import { api, type Dataset, type Message } from './api';
+import { api, streamMessage, type Dataset, type Message } from './api';
 type User = { email: string; id: string };
 const number = (n: number) =>
   new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(n);
@@ -749,7 +749,10 @@ function Chat({ dataset, enabled }: { dataset: Dataset; enabled: boolean }) {
     [question, setQuestion] = useState(''),
     [busy, setBusy] = useState(false),
     [error, setError] = useState('');
+  const [partial, setPartial] = useState('');
+  const abort = useRef<AbortController | null>(null);
   const end = useRef<HTMLDivElement>(null);
+  useEffect(() => () => abort.current?.abort(), [dataset.id]);
   useEffect(() => {
     api<Message[]>('/datasets/' + dataset.id + '/messages')
       .then(setMessages)
@@ -764,15 +767,20 @@ function Chat({ dataset, enabled }: { dataset: Dataset; enabled: boolean }) {
     setBusy(true);
     setError('');
     try {
-      await api('/datasets/' + dataset.id + '/messages', {
-        method: 'POST',
-        body: JSON.stringify({ question }),
-      });
+      setPartial('');
+      abort.current = new AbortController();
+      await streamMessage(
+        '/datasets/' + dataset.id + '/messages',
+        question,
+        (delta) => setPartial((value) => value + delta),
+        abort.current.signal,
+      );
       setQuestion('');
       setMessages(await api<Message[]>('/datasets/' + dataset.id + '/messages'));
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      setPartial('');
       setBusy(false);
     }
   }
@@ -832,7 +840,15 @@ function Chat({ dataset, enabled }: { dataset: Dataset; enabled: boolean }) {
               <p>{m.content}</p>
             </div>
           ))}
-          {busy && <div className="thinking">Finding the story in your data…</div>}
+          {busy &&
+            (partial ? (
+              <div className="message assistant">
+                <small>INSIGHTCHAT</small>
+                <p>{partial}</p>
+              </div>
+            ) : (
+              <div className="thinking">Finding the story in your data…</div>
+            ))}
           <div ref={end} />
         </div>
         {error && (
@@ -869,7 +885,8 @@ function Chat({ dataset, enabled }: { dataset: Dataset; enabled: boolean }) {
           Grounded in this dataset · Double-check AI answers
         </small>
         <small className="privacy-note">
-          Sending a question shares summary statistics and 8 sample rows with OpenAI.
+          Sending a question shares relevant statistics, schema, up to 3 sample rows, and recent
+          chat context with OpenAI.
         </small>
       </form>
     </section>

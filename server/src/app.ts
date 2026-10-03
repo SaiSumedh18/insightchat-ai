@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { pool } from './db.js';
 import { config } from './config.js';
 import { analyze, parseCsv, groupRows, InputError } from './analytics.js';
-import { answerQuestion, type Answer } from './assistant.js';
+import { answerQuestion, streamQuestion, type Answer, type StreamAnswer } from './assistant.js';
 const credentials = z.object({
   email: z
     .email()
@@ -35,7 +35,11 @@ const cookieOptions = {
   secure: config.secureCookie,
   path: '/',
 };
-export function createApp(answer: Answer = answerQuestion, aiEnabled = Boolean(config.apiKey)) {
+export function createApp(
+  answer: Answer = answerQuestion,
+  aiEnabled = Boolean(config.apiKey),
+  streamAnswer: StreamAnswer = streamQuestion,
+) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet(), express.json({ limit: '16kb' }), cookieParser());
@@ -127,7 +131,15 @@ export function createApp(answer: Answer = answerQuestion, aiEnabled = Boolean(c
     );
     res.json(rows);
   });
-  app.post('/api/datasets', upload.single('file'), async (req, res) => {
+  const uploadLimit = rateLimit({
+    windowMs: 60000,
+    limit: 20,
+    keyGenerator: (_req, res) => res.locals.userId,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Please wait before uploading more files.' },
+  });
+  app.post('/api/datasets', uploadLimit, upload.single('file'), async (req, res) => {
     if (!req.file || !req.file.originalname.toLowerCase().endsWith('.csv'))
       throw new InputError('Choose a .csv file.');
     const { columns, rows } = parseCsv(req.file.buffer);
@@ -191,6 +203,7 @@ export function createApp(answer: Answer = answerQuestion, aiEnabled = Boolean(c
     message: { error: 'Please wait a minute before asking more questions.' },
   });
   const busy = new Set<string>();
+  const busyUsers = new Set<string>();
   app.post('/api/datasets/:id/messages', chatLimit, async (req, res) => {
     const { question } = z.object({ question: z.string().trim().min(1).max(1000) }).parse(req.body);
     if (!aiEnabled)
@@ -199,9 +212,10 @@ export function createApp(answer: Answer = answerQuestion, aiEnabled = Boolean(c
           'AI is not configured yet. Add OPENAI_API_KEY to server/.env and restart the API. Your dashboard works without it.',
       });
     const dataset = res.locals.dataset;
-    if (busy.has(dataset.id))
+    if (busy.has(dataset.id) || busyUsers.has(res.locals.userId))
       return res.status(409).json({ error: 'An answer is already being prepared. Please wait.' });
     busy.add(dataset.id);
+    busyUsers.add(res.locals.userId);
     try {
       const { rows: history } = await pool.query(
         'SELECT role,content FROM (SELECT id,role,content FROM messages WHERE dataset_id=$1 ORDER BY id DESC LIMIT 8) recent ORDER BY id',
@@ -224,6 +238,88 @@ export function createApp(answer: Answer = answerQuestion, aiEnabled = Boolean(c
       res.status(201).json({ role: 'assistant', content });
     } finally {
       busy.delete(dataset.id);
+      busyUsers.delete(res.locals.userId);
+    }
+  });
+  app.post('/api/datasets/:id/messages/stream', chatLimit, async (req, res) => {
+    const { question } = z.object({ question: z.string().trim().min(1).max(1000) }).parse(req.body);
+    if (!aiEnabled)
+      return res
+        .status(503)
+        .json({ error: 'AI is not configured. Your dashboard works without it.' });
+    const dataset = res.locals.dataset;
+    const userId = res.locals.userId;
+    if (busy.has(dataset.id) || busyUsers.has(userId))
+      return res.status(409).json({ error: 'An answer is already being prepared. Please wait.' });
+    busy.add(dataset.id);
+    busyUsers.add(userId);
+    const controller = new AbortController();
+    const close = () => controller.abort();
+    res.on('close', close);
+    let heartbeat: ReturnType<typeof setInterval> | undefined;
+    const send = async (event: string, data: unknown) => {
+      if (controller.signal.aborted) throw new Error('Client disconnected');
+      if (!res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`)) {
+        await new Promise<void>((resolve, reject) => {
+          const drain = () => {
+            cleanup();
+            resolve();
+          };
+          const abort = () => {
+            cleanup();
+            reject(new Error('Client disconnected'));
+          };
+          const cleanup = () => {
+            res.off('drain', drain);
+            controller.signal.removeEventListener('abort', abort);
+          };
+          res.once('drain', drain);
+          controller.signal.addEventListener('abort', abort, { once: true });
+        });
+      }
+    };
+    try {
+      const { rows: history } = await pool.query(
+        'SELECT role,content FROM (SELECT id,role,content FROM messages WHERE dataset_id=$1 ORDER BY id DESC LIMIT 8) recent ORDER BY id',
+        [dataset.id],
+      );
+      res.status(200).set({
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache, no-transform',
+        'X-Accel-Buffering': 'no',
+        Connection: 'keep-alive',
+      });
+      res.flushHeaders();
+      heartbeat = setInterval(() => {
+        if (!res.writableEnded) res.write(': heartbeat\n\n');
+      }, 10000);
+      const content = await streamAnswer(
+        dataset,
+        question,
+        history,
+        (delta) => send('delta', { delta }),
+        controller.signal,
+      );
+      if (controller.signal.aborted) return;
+      await pool.query(
+        "INSERT INTO messages(dataset_id,role,content) VALUES($1,'user',$2),($1,'assistant',$3)",
+        [dataset.id, question, content],
+      );
+      await send('done', { role: 'assistant', content });
+    } catch {
+      if (!controller.signal.aborted) {
+        if (res.headersSent)
+          await send('error', {
+            error: 'The AI response was interrupted. Please try again.',
+          }).catch(() => {});
+        else res.status(502).json({ error: 'Unable to prepare the AI response.' });
+      }
+    } finally {
+      if (heartbeat) clearInterval(heartbeat);
+      res.off('close', close);
+      busy.delete(dataset.id);
+      busyUsers.delete(userId);
+      res.end();
     }
   });
   app.use((_req, res) => res.status(404).json({ error: 'Endpoint not found.' }));

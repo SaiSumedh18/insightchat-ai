@@ -39,7 +39,7 @@ describe('CSV parsing and deterministic analytics', () => {
       analytics: analyze(['Category', 'Sales'], rows),
     });
     expect(evidence.statistics.stats[1].sum).toBe(190);
-    expect(evidence.sample).toHaveLength(8);
+    expect(evidence.sample).toHaveLength(3);
     expect(evidence.groups[0].totalGroups).toBe(20);
     expect(evidence.groups[0].topGroups).toHaveLength(12);
   });

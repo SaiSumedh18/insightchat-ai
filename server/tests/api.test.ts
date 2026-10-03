@@ -17,6 +17,8 @@ const password = 'test-password-123';
 let datasetId = '';
 beforeAll(async () => {
   validateConfig();
+  if (!new URL(process.env.DATABASE_URL!).pathname.endsWith('_test'))
+    throw new Error('Use an isolated test database');
   await migrate();
 });
 afterAll(async () => {

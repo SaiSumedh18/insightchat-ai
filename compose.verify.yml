@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: insightchat
+      POSTGRES_PASSWORD: local-test-only
+      POSTGRES_DB: insightchat_test
+    ports: ['127.0.0.1:5498:5432']
+    volumes: ['postgres_data:/var/lib/postgresql/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U insightchat -d insightchat_test']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://insightchat:local-test-only@db:5432/insightchat_test
+      JWT_SECRET: isolated-compose-secret-at-least-32chars
+      OPENAI_API_KEY: ''
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+      APP_ORIGIN: http://localhost:8093
+      PORT: 4300
+    ports: ['127.0.0.1:4391:4300']
+    depends_on:
+      db: { condition: service_healthy }
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:4300/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  web:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    ports: ['127.0.0.1:8093:80']
+    depends_on:
+      api: { condition: service_healthy }
+volumes:
+  postgres_data:

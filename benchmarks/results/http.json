@@ -1,0 +1,38 @@
+{
+  "method": "Local HTTP fetch to one running Express server; isolated native PostgreSQL 16.3, Node 24.11.0, macOS arm64. 10,000-row/3-column synthetic CSV. Sequential requests, no warmup. Upload: 15 samples (20/min production limit), deleting prior uploads between requests; throughput includes cleanup. Summary/chart: 100 samples each on final upload; timings include full response body decoding. Nearest-rank p50/p95. No model calls; no before/after latency speedup claimed.",
+  "summaries": [
+    {
+      "operation": "upload",
+      "rows": 10000,
+      "concurrency": 1,
+      "requests": 15,
+      "p50Ms": 37.49004100000002,
+      "p95Ms": 91.45487500000036,
+      "throughputRequestsPerSecond": 15.973020503501553,
+      "errorRate": 0,
+      "wallMs": 939.0835
+    },
+    {
+      "operation": "summary",
+      "rows": 10000,
+      "concurrency": 1,
+      "requests": 100,
+      "p50Ms": 9.097083999999995,
+      "p95Ms": 22.214249999999993,
+      "throughputRequestsPerSecond": 85.42228797642704,
+      "errorRate": 0,
+      "wallMs": 1170.654666
+    },
+    {
+      "operation": "chart",
+      "rows": 10000,
+      "concurrency": 1,
+      "requests": 100,
+      "p50Ms": 9.399791000000732,
+      "p95Ms": 32.46333400000003,
+      "throughputRequestsPerSecond": 69.66566922844747,
+      "errorRate": 0,
+      "wallMs": 1435.4272500000002
+    }
+  ]
+}
