@@ -233,7 +233,7 @@ The 10,000-row cap stays. Current local processing is fast enough that an async 
 - `npm run check`: both TypeScript/frontend builds and 36 backend tests. `npm run format:check`: Prettier. This repository has no separate ESLint configuration; formatting/type checks are the existing static checks.
 - Browser verification: set DATABASE_URL to a dedicated `_test` database, set a temporary JWT_SECRET, then `E2E_STUB_AI=1 npm run test:e2e`. Both browser tests run with a test-only deterministic streaming provider; the production entry point never imports it. The original dataset lifecycle E2E remains, plus streamed-answer persistence after reload.
 - Docker verification: `docker compose -p insightchat-upgrade-verify -f compose.verify.yml up -d --build --wait` uses PostgreSQL 17 on 5498, API 4391, frontend 8093, no OpenAI key, and independent data. Production Compose still uses its original configuration.
-- CI now includes formatting, build/backend tests and both browser E2Es with a deterministic provider. Remote GitHub Actions has not been executed in this session.
+- CI now includes formatting, build/backend tests and both browser E2Es with a deterministic provider. [GitHub Actions passed](https://github.com/SaiSumedh18/insightchat-ai/actions/runs/37157938853) for the implementation commit.
 
 Verified: 36/36 backend tests, 2/2 browser E2Es, builds, formatting, Docker images and isolated Compose startup pass. Provider-event tests mock the OpenAI SDK; route tests use real PostgreSQL and real local HTTP. Live OpenAI generation quality, provider latency/usage, and cloud operation are not verified or claimed. No billable cloud resources or paid model calls were made. The existing frontend bundle-size warning remains.
 
