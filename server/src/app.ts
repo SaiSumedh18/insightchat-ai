@@ -6,6 +6,7 @@ import multer from 'multer';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'node:crypto';
+import { resolve } from 'node:path';
 import { z } from 'zod';
 import { pool } from './db.js';
 import { config } from './config.js';
@@ -42,6 +43,8 @@ export function createApp(
 ) {
   const app = express();
   app.disable('x-powered-by');
+  // Render terminates HTTPS at one reverse proxy; never trust arbitrary forwarded hops.
+  if (process.env.RENDER === 'true') app.set('trust proxy', 1);
   app.use(helmet(), express.json({ limit: '16kb' }), cookieParser());
   // Same-origin requests only. SameSite cookies add a second layer of CSRF protection.
   app.use((req, res, next) => {
@@ -322,6 +325,12 @@ export function createApp(
       res.end();
     }
   });
+  app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint not found.' }));
+  if (process.env.STATIC_DIR) {
+    const directory = resolve(process.env.STATIC_DIR);
+    app.use(express.static(directory));
+    app.get('/{*path}', (_req, res) => res.sendFile(resolve(directory, 'index.html')));
+  }
   app.use((_req, res) => res.status(404).json({ error: 'Endpoint not found.' }));
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof z.ZodError)

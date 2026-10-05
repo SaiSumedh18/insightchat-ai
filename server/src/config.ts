@@ -3,7 +3,7 @@ export const config = {
   databaseUrl: process.env.DATABASE_URL ?? '',
   jwtSecret: process.env.JWT_SECRET ?? '',
   port: Number(process.env.PORT ?? 4300),
-  origin: process.env.APP_ORIGIN ?? 'http://localhost:5177',
+  origin: process.env.APP_ORIGIN ?? process.env.RENDER_EXTERNAL_URL ?? 'http://localhost:5177',
   apiKey: process.env.OPENAI_API_KEY ?? '',
   model: process.env.OPENAI_MODEL ?? 'gpt-4.1-mini',
   secureCookie: process.env.COOKIE_SECURE === 'true',
