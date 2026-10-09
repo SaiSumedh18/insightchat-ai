@@ -1,8 +1,7 @@
 # Verification — September 27, 2026
 
-Project: `/Users/saisumedh/Downloads/insightchat-ai`
 
-## Completed on this Mac
+## Checks completed
 
 | Check                                                       | Result                         |
 | ----------------------------------------------------------- | ------------------------------ |
