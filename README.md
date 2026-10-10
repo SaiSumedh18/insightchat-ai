@@ -33,23 +33,23 @@ flowchart LR
 
 Evidence size per question, before and after question-specific selection (10,000-row synthetic dataset):
 
-| Question | Before (tokens) | After (tokens) | Reduction |
-|---|---:|---:|---:|
-| Revenue by Category | 8,170 | 483 | 94.1% |
-| What is the total Profit? | 8,170 | 716 | 91.2% |
-| Summarize this dataset | 8,170 | 1,622 | 80.2% |
+| Question                  | Before (tokens) | After (tokens) | Reduction |
+| ------------------------- | --------------: | -------------: | --------: |
+| Revenue by Category       |           8,170 |            483 |     94.1% |
+| What is the total Profit? |           8,170 |            716 |     91.2% |
+| Summarize this dataset    |           8,170 |          1,622 |     80.2% |
 
 These are local token estimates for the evidence only, not measured API bills. Method: [engineering notes](docs/ENGINEERING_NOTES.md#measured-evidence-context-reduction).
 
 ## Tech stack
 
-| Area | Tools |
-|---|---|
-| Frontend | React, TypeScript, Vite |
-| Backend | Node.js, Express, TypeScript, Server-Sent Events |
-| Data and AI | PostgreSQL (JSONB), OpenAI Responses API |
-| Testing | Vitest, Supertest (real PostgreSQL), Playwright |
-| Delivery | Docker Compose, Nginx, GitHub Actions |
+| Area        | Tools                                            |
+| ----------- | ------------------------------------------------ |
+| Frontend    | React, TypeScript, Vite                          |
+| Backend     | Node.js, Express, TypeScript, Server-Sent Events |
+| Data and AI | PostgreSQL (JSONB), OpenAI Responses API         |
+| Testing     | Vitest, Supertest (real PostgreSQL), Playwright  |
+| Delivery    | Docker Compose, Nginx, GitHub Actions            |
 
 ## Run it locally
 

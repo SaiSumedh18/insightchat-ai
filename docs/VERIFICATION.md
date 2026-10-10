@@ -1,6 +1,5 @@
 # Verification — September 27, 2026
 
-
 ## Checks completed
 
 | Check                                                       | Result                         |
